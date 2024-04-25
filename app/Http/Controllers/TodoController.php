@@ -15,6 +15,7 @@ class TodoController extends Controller
 
         $todos = QueryBuilder::for(Todo::class)
             ->where('user_id', auth()->user()->id)
+            ->with(['user', 'tags'])
             ->allowedFilters('title', 'body', 'status')
             ->allowedSorts('title', 'body', 'status')
             ->paginate($request->per_page ?? 10);
