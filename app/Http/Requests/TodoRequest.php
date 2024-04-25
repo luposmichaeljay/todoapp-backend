@@ -12,7 +12,6 @@ class TodoRequest extends FormRequest
             'title' => ['required'],
             'body' => ['required'],
             'status' => ['required', 'integer'],
-            'user_id' => ['required', 'exists:users'],
         ];
     }
 
