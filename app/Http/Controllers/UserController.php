@@ -12,9 +12,9 @@ class UserController extends Controller
     public function login(LoginRequest $request)
     {
 
-        $user = User::find(['email' => $request->email]);
+        $user = User::whereEmail($request->email)->first();
 
-        if (Hash::check($request->password, $user->password)) {
+        if ($user && Hash::check($request->password, $user->password)) {
 
             $token = $user->createToken('auth_token')->plainTextToken;
 
