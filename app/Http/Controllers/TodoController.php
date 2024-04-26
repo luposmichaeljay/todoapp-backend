@@ -30,7 +30,11 @@ class TodoController extends Controller
         $todo = Auth::user()->todos()->create([
             'title' => $request->title,
             'body' => $request->body,
+            'priority' => $request->priority,
             'status' => $request->status,
+            'archived' => $request->archived,
+            'date_completed' => $request->date_completed,
+            'due_date' => $request->due_date,
         ]);
 
         $todo->tags()->sync($request->tags);
@@ -50,7 +54,7 @@ class TodoController extends Controller
         if ($todo->user_id !== auth()->user()->id) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
-        return $todo;
+        return $todo->fresh(['user', 'tags']);
     }
 
     public function update(TodoRequest $request, Todo $todo)

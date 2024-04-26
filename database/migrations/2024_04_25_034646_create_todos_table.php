@@ -11,8 +11,12 @@ return new class extends Migration {
             $table->id();
             $table->string('title');
             $table->string('body');
+            $table->tinyInteger('priority');
             $table->tinyInteger('status');
             $table->foreignId('user_id');
+            $table->timestamp('due_date')->nullable();
+            $table->timestamp('date_completed')->nullable();
+            $table->timestamp('archived')->nullable();
             $table->timestamps();
         });
     }
