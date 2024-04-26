@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\TodoRequest;
+use App\Models\Tag;
 use App\Models\Todo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,7 +27,22 @@ class TodoController extends Controller
 
     public function store(TodoRequest $request)
     {
-        return Auth::user()->todos()->create($request->validated());
+        $todo = Auth::user()->todos()->create([
+            'title' => $request->title,
+            'body' => $request->body,
+            'status' => $request->status,
+        ]);
+
+        $todo->tags()->sync($request->tags);
+
+        if ($request->new_tags) {
+            foreach ($request->new_tags as $tag) {
+                $new_tag = Tag::create(['name' => $tag]);
+                $todo->tags()->attach($new_tag);
+            }
+        }
+
+        return $todo->fresh(['user', 'tags']);
     }
 
     public function show(Todo $todo)
