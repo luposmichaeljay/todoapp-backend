@@ -7,6 +7,7 @@ use App\Models\Tag;
 use App\Models\Todo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class TodoController extends Controller
@@ -51,17 +52,19 @@ class TodoController extends Controller
 
     public function show(Todo $todo)
     {
-        if ($todo->user_id !== auth()->user()->id) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+        if (!Gate::allows('show', $todo)) {
+            abort(403, 'You do not own this todo.');
         }
+
         return $todo->fresh(['user', 'tags']);
     }
 
     public function update(TodoRequest $request, Todo $todo)
     {
-        if ($todo->user_id !== auth()->user()->id) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+        if (!Gate::allows('update', $todo)) {
+            abort(403, 'You do not own this todo.');
         }
+
         $todo->update($request->validated());
 
         return $todo;
@@ -69,9 +72,10 @@ class TodoController extends Controller
 
     public function destroy(Todo $todo)
     {
-        if ($todo->user_id !== auth()->user()->id) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+        if (!Gate::allows('delete', $todo)) {
+            abort(403, 'You do not own this todo.');
         }
+
         $todo->delete();
 
         return response()->json();
