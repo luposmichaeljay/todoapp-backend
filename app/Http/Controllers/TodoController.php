@@ -14,11 +14,10 @@ class TodoController extends Controller
 {
     public function index(Request $request)
     {
-
         $todos = QueryBuilder::for(Todo::class)
             ->where('user_id', auth()->user()->id)
             ->with(['user', 'tags'])
-            ->allowedFilters('title', 'body', 'status')
+            ->allowedFilters('title', 'body', 'status', 'priority', 'archived', 'date_completed', 'due_date')
             ->allowedSorts('title', 'body', 'status')
             ->paginate($request->per_page ?? 10);
 
